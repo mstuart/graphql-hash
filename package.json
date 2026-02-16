@@ -1,0 +1,44 @@
+{
+	"name": "graphql-hash",
+	"version": "0.0.0-development",
+	"description": "Generate a deterministic hash of a GraphQL query for caching and persisted queries",
+	"license": "MIT",
+	"repository": "mstuart/graphql-hash",
+	"funding": "https://github.com/sponsors/mstuart",
+	"author": {
+		"name": "Mark Stuart",
+		"email": "mstuart@users.noreply.github.com",
+		"url": "https://github.com/mstuart"
+	},
+	"type": "module",
+	"exports": {
+		"types": "./index.d.ts",
+		"default": "./index.js"
+	},
+	"sideEffects": false,
+	"engines": {
+		"node": ">=20"
+	},
+	"scripts": {
+		"test": "xo && ava && tsd"
+	},
+	"files": [
+		"index.js",
+		"index.d.ts"
+	],
+	"keywords": [
+		"graphql",
+		"hash",
+		"query",
+		"persisted",
+		"cache",
+		"fingerprint",
+		"sha256",
+		"normalize"
+	],
+	"devDependencies": {
+		"ava": "^6.0.0",
+		"tsd": "^0.31.0",
+		"xo": "^0.60.0"
+	}
+}
