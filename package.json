@@ -1,6 +1,6 @@
 {
 	"name": "graphql-hash",
-	"version": "0.0.0-development",
+	"version": "1.0.0",
 	"description": "Generate a deterministic hash of a GraphQL query for caching and persisted queries",
 	"license": "MIT",
 	"repository": "mstuart/graphql-hash",
