@@ -2,9 +2,9 @@ import {createHash} from 'node:crypto';
 
 export function normalizeQuery(query) {
 	return query
-		.replaceAll(/#[^\n]*/g, '')
-		.replaceAll(/\s+/g, ' ')
-		.replaceAll(/\s*([{}(),:@=])\s*/g, '$1')
+		.replaceAll(/#[^\n]*/gv, '')
+		.replaceAll(/\s+/gv, ' ')
+		.replaceAll(/\s?(?<char>[\(\),:=@\{\}])\s?/gv, '$<char>')
 		.trim();
 }
 

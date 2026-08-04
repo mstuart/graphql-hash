@@ -36,7 +36,7 @@ test('different queries produce different hashes', t => {
 
 test('returns a hex string', t => {
 	const hash = graphqlHash('{ user { name } }');
-	t.regex(hash, /^[\da-f]+$/);
+	t.regex(hash, /^[\da-f]+$/v);
 });
 
 test('returns a 64-character hex string for sha256', t => {
@@ -47,7 +47,7 @@ test('returns a 64-character hex string for sha256', t => {
 test('custom algorithm works', t => {
 	const hash = graphqlHash('{ user { name } }', {algorithm: 'md5'});
 	t.is(hash.length, 32);
-	t.regex(hash, /^[\da-f]+$/);
+	t.regex(hash, /^[\da-f]+$/v);
 });
 
 test('normalizeQuery strips comments', t => {
