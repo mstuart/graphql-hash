@@ -1,11 +1,11 @@
-export type Options = {
-	/**
+export interface Options {
+  /**
 	The hash algorithm to use.
 
 	@default 'sha256'
 	*/
-	readonly algorithm?: string;
-};
+  readonly algorithm?: string;
+}
 
 /**
 Normalize a GraphQL query by stripping comments, collapsing whitespace, and removing space around structural characters.
