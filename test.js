@@ -155,3 +155,14 @@ test("honors escaped quotes inside strings", (t) => {
   const result = normalizeQuery(`{ a(x: "he said \\"hi\\" # ok") { b } }`);
   t.is(result, `{a(x:"he said \\"hi\\" # ok"){b}}`);
 });
+
+test("ignores quotes inside comments", (t) => {
+  const withComment = `# Select the "name" field\n{ user { name } }`;
+  t.is(normalizeQuery(withComment), normalizeQuery("{ user { name } }"));
+});
+
+test("honors escaped triple quotes inside block strings", (t) => {
+  const compact = String.raw`{a(x:"""keep \""" # literal"""){b}}`;
+  const spaced = String.raw`{ a ( x : """keep \""" # literal""" ) { b } }`;
+  t.is(normalizeQuery(spaced), normalizeQuery(compact));
+});

@@ -10,6 +10,41 @@ function normalizeOutsideStrings(segment) {
     .replaceAll(/\s*([{}(),:@=])\s*/g, "$1");
 }
 
+function findBlockStringEnd(query, start) {
+  let end = start;
+  while (end < query.length) {
+    end = query.indexOf('"""', end);
+    let backslashes = 0;
+    for (
+      let cursor = end - 1;
+      end !== -1 && query[cursor] === "\\";
+      cursor -= 1
+    ) {
+      backslashes += 1;
+    }
+    if (end === -1 || backslashes % 2 === 0) {
+      return end;
+    }
+    end += 3;
+  }
+  return -1;
+}
+
+function findRegularStringEnd(query, start) {
+  let cursor = start;
+  while (cursor < query.length) {
+    if (query[cursor] === "\\") {
+      cursor += 2;
+      continue;
+    }
+    if (query[cursor] === '"') {
+      return cursor + 1;
+    }
+    cursor += 1;
+  }
+  return query.length;
+}
+
 export function normalizeQuery(query) {
   let result = "";
   let pending = "";
@@ -22,10 +57,20 @@ export function normalizeQuery(query) {
   };
 
   while (index < length) {
+    // A quote in a comment is ordinary comment text, not a string opener.
+    if (query[index] === "#") {
+      while (index < length && query[index] !== "\n") {
+        index += 1;
+      }
+      pending += "\n";
+      index += 1;
+      continue;
+    }
+
     // Block string ("""..."""): preserve verbatim, including # and whitespace.
     if (query.startsWith('"""', index)) {
       flush();
-      const end = query.indexOf('"""', index + 3);
+      const end = findBlockStringEnd(query, index + 3);
       const stop = end === -1 ? length : end + 3;
       result += query.slice(index, stop);
       index = stop;
@@ -35,18 +80,7 @@ export function normalizeQuery(query) {
     // Regular string ("..."): preserve verbatim, honoring backslash escapes.
     if (query[index] === '"') {
       flush();
-      let cursor = index + 1;
-      while (cursor < length) {
-        if (query[cursor] === "\\") {
-          cursor += 2;
-          continue;
-        }
-        if (query[cursor] === '"') {
-          cursor += 1;
-          break;
-        }
-        cursor += 1;
-      }
+      const cursor = findRegularStringEnd(query, index + 1);
       result += query.slice(index, cursor);
       index = cursor;
       continue;
