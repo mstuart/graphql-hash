@@ -130,3 +130,39 @@ test("empty options object uses defaults", (t) => {
   const hash2 = graphqlHash("{ user { name } }", {});
   t.is(hash1, hash2);
 });
+
+test("does not strip # inside string literals", (t) => {
+  const result = normalizeQuery(`{ user(bio: "a # b") { name } }`);
+  t.is(result, `{user(bio:"a # b"){name}}`);
+});
+
+test("preserves whitespace inside string literals (no collision)", (t) => {
+  t.not(graphqlHash(`{ a(x: "a b") }`), graphqlHash(`{ a(x: "a  b") }`));
+});
+
+test("code after a string containing # is not lost", (t) => {
+  const withHash = graphqlHash(`{ user(bio: "x # y") { name email } }`);
+  const truncated = graphqlHash(`{ user(bio: "x`);
+  t.not(withHash, truncated);
+});
+
+test("preserves block string literals verbatim", (t) => {
+  const result = normalizeQuery(`{ a(x: """multi\nline # keep""") }`);
+  t.is(result, `{a(x:"""multi\nline # keep""")}`);
+});
+
+test("honors escaped quotes inside strings", (t) => {
+  const result = normalizeQuery(`{ a(x: "he said \\"hi\\" # ok") { b } }`);
+  t.is(result, `{a(x:"he said \\"hi\\" # ok"){b}}`);
+});
+
+test("ignores quotes inside comments", (t) => {
+  const withComment = `# Select the "name" field\n{ user { name } }`;
+  t.is(normalizeQuery(withComment), normalizeQuery("{ user { name } }"));
+});
+
+test("honors escaped triple quotes inside block strings", (t) => {
+  const compact = String.raw`{a(x:"""keep \""" # literal"""){b}}`;
+  const spaced = String.raw`{ a ( x : """keep \""" # literal""" ) { b } }`;
+  t.is(normalizeQuery(spaced), normalizeQuery(compact));
+});
