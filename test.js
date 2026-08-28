@@ -120,6 +120,13 @@ test("normalizeQuery is a named export", (t) => {
   t.is(typeof normalizeQuery, "function");
 });
 
+test("normalizeQuery rejects non-string input with a clear error", (t) => {
+  t.throws(() => normalizeQuery(null), {
+    instanceOf: TypeError,
+    message: "Expected `query` to be a string",
+  });
+});
+
 test("normalizeQuery handles inline comments at end of line", (t) => {
   const result = normalizeQuery("{ user { name # inline comment\n email } }");
   t.is(result, "{user{name email}}");

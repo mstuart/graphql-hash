@@ -46,6 +46,10 @@ function findRegularStringEnd(query, start) {
 }
 
 export function normalizeQuery(query) {
+  if (typeof query !== "string") {
+    throw new TypeError("Expected `query` to be a string");
+  }
+
   let result = "";
   let pending = "";
   let index = 0;
