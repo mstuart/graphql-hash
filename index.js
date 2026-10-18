@@ -5,7 +5,7 @@ import { createHash } from "node:crypto";
 // around structural punctuation.
 function normalizeOutsideStrings(segment) {
   return segment
-    .replaceAll(/#[^\n]*/g, "")
+    .replaceAll(/#[^\r\n]*/g, "")
     .replaceAll(/\s+/g, " ")
     .replaceAll(/\s*([{}(),:@=])\s*/g, "$1");
 }
@@ -63,7 +63,7 @@ export function normalizeQuery(query) {
   while (index < length) {
     // A quote in a comment is ordinary comment text, not a string opener.
     if (query[index] === "#") {
-      while (index < length && query[index] !== "\n") {
+      while (index < length && query[index] !== "\n" && query[index] !== "\r") {
         index += 1;
       }
       pending += "\n";
