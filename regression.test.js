@@ -18,3 +18,14 @@ test("line-feed and CRLF comments preserve the same selection", (t) => {
     );
   }
 });
+
+for (const backslashCount of [1, 2, 3, 4]) {
+  test(`escaped block quotes after ${backslashCount} backslashes preserve content`, (t) => {
+    const prefix = `keep ${"\\".repeat(backslashCount)}""" # `;
+    const first = `{ a(x: """${prefix}first""") }`;
+    const second = `{ a(x: """${prefix}second""") }`;
+
+    t.is(normalizeQuery(first), `{a(x:"""${prefix}first""")}`);
+    t.not(graphqlHash(first), graphqlHash(second));
+  });
+}
