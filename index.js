@@ -14,15 +14,8 @@ function findBlockStringEnd(query, start) {
   let end = start;
   while (end < query.length) {
     end = query.indexOf('"""', end);
-    let backslashes = 0;
-    for (
-      let cursor = end - 1;
-      end !== -1 && query[cursor] === "\\";
-      cursor -= 1
-    ) {
-      backslashes += 1;
-    }
-    if (end === -1 || backslashes % 2 === 0) {
+    // Block strings escape triple quotes regardless of preceding backslashes.
+    if (end === -1 || query[end - 1] !== "\\") {
       return end;
     }
     end += 3;
